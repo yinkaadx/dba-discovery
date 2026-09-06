@@ -1,0 +1,147 @@
+{
+  "findings": [
+    {
+      "id": "MY-HA-001",
+      "area": "ha_dr",
+      "severity": "High",
+      "title": "Binary logging is off",
+      "detail": "log_bin is OFF, so replication cannot be set up and point in time recovery between backups is impossible.",
+      "recommendation": "Enable log_bin with binlog_format ROW, set an expiry (binlog_expire_logs_seconds or expire_logs_days) and sync_binlog 1; restart required.",
+      "effort": "Small",
+      "evidence": [
+        "ha_dr.binlog"
+      ]
+    },
+    {
+      "id": "MY-HA-002",
+      "area": "ha_dr",
+      "severity": "High",
+      "title": "Single server with no replica",
+      "detail": "SHOW REPLICA STATUS is empty and no replica is connected, so a host failure means downtime until a restore completes.",
+      "recommendation": "Add a replica (asynchronous or semi synchronous) and a documented promotion procedure; agree the recovery time objective with the business first.",
+      "effort": "Large",
+      "evidence": [
+        "ha_dr.replica_status",
+        "ha_dr.replicas_connected"
+      ]
+    },
+    {
+      "id": "MY-CHG-001",
+      "area": "change_management",
+      "severity": "Medium",
+      "title": "No schema migration history table found",
+      "detail": "No migration tool history table exists, so schema changes are probably applied by hand.",
+      "recommendation": "Adopt one migration tool and put every DDL change in version control with a review step; baseline the current schema first.",
+      "effort": "Medium",
+      "evidence": [
+        "change_management.migration_tables"
+      ]
+    },
+    {
+      "id": "MY-SEC-001",
+      "area": "security",
+      "severity": "High",
+      "title": "TLS is not available on the server",
+      "detail": "have_ssl is DISABLED, so every network client sends credentials and data in clear text.",
+      "recommendation": "Install a certificate (ssl_ca, ssl_cert, ssl_key), restart, then set require_secure_transport ON once clients are verified.",
+      "effort": "Small",
+      "evidence": [
+        "security.ssl"
+      ]
+    },
+    {
+      "id": "MY-SEC-002",
+      "area": "security",
+      "severity": "Medium",
+      "title": "local_infile is enabled",
+      "detail": "A compromised or malicious server can read files from a connecting client's file system through LOAD DATA LOCAL.",
+      "recommendation": "Set local_infile OFF unless a specific loader needs it, and then limit it to that user.",
+      "effort": "Small",
+      "evidence": [
+        "security.local_infile"
+      ]
+    },
+    {
+      "id": "MY-SEC-003",
+      "area": "security",
+      "severity": "Low",
+      "title": "Host name resolution is on for connections",
+      "detail": "skip_name_resolve is OFF; DNS delays slow connections and grants keyed on host names depend on DNS being trustworthy.",
+      "recommendation": "Turn skip_name_resolve ON and convert host based grants to IP ranges.",
+      "effort": "Small",
+      "evidence": [
+        "security.local_infile"
+      ]
+    },
+    {
+      "id": "MY-ACC-001",
+      "area": "access",
+      "severity": "Medium",
+      "title": "Accounts accept connections from any host",
+      "detail": "app@%",
+      "recommendation": "Limit each account's host to the application subnet; the firewall should not be the only control.",
+      "effort": "Small",
+      "evidence": [
+        "access.users"
+      ]
+    },
+    {
+      "id": "MY-ACC-002",
+      "area": "access",
+      "severity": "Low",
+      "title": "Passwords never expire by default",
+      "detail": "default_password_lifetime is 0.",
+      "recommendation": "Set a lifetime for human accounts and exempt service accounts explicitly (ALTER USER ... PASSWORD EXPIRE NEVER).",
+      "effort": "Small",
+      "evidence": [
+        "access.password_lifetime"
+      ]
+    },
+    {
+      "id": "MY-MON-001",
+      "area": "monitoring",
+      "severity": "Medium",
+      "title": "Slow query log is off",
+      "detail": "No record of slow statements exists, so performance work has no evidence to start from.",
+      "recommendation": "Set slow_query_log ON with long_query_time around 1 second and review with `pt-query-digest` or the Performance Schema.",
+      "effort": "Small",
+      "evidence": [
+        "monitoring.settings"
+      ]
+    },
+    {
+      "id": "MY-MON-002",
+      "area": "monitoring",
+      "severity": "Low",
+      "title": "Performance Schema is off",
+      "detail": "Per statement and wait event instrumentation is unavailable.",
+      "recommendation": "Enable performance_schema (restart) with the default instruments.",
+      "effort": "Small",
+      "evidence": [
+        "monitoring.settings"
+      ]
+    },
+    {
+      "id": "MY-OPS-001",
+      "area": "operations",
+      "severity": "Medium",
+      "title": "1 MyISAM table(s) in application schemas",
+      "detail": "MyISAM has no crash recovery, no transactions and table level locks: shopdemo.legacy_log.",
+      "recommendation": "Convert to InnoDB (ALTER TABLE ... ENGINE=InnoDB) after checking for FULLTEXT or spatial features that need attention.",
+      "effort": "Medium",
+      "evidence": [
+        "operations.myisam_tables"
+      ]
+    }
+  ],
+  "unknowns": [
+    {
+      "area": "backup",
+      "question": "Backup schedule, retention and the date of the last successful restore test",
+      "how_to_obtain": "Ask the operations owner for the backup job (mysqldump, mariabackup, xtrabackup or snapshots), retention and restore test log; the server cannot report these",
+      "evidence": [
+        "backup.backup_tooling_note"
+      ]
+    }
+  ]
+}

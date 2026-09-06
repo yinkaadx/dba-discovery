@@ -1,0 +1,160 @@
+{
+  "findings": [
+    {
+      "id": "PG-HA-001",
+      "area": "ha_dr",
+      "severity": "High",
+      "title": "Single primary with no streaming replica",
+      "detail": "pg_stat_replication returned no rows and the server is not in recovery, so a host failure means downtime until a restore completes.",
+      "recommendation": "Add a hot standby (streaming replication with a replication slot) and a tested promotion procedure; decide the target recovery time with the business first.",
+      "effort": "Large",
+      "evidence": [
+        "ha_dr.replication",
+        "architecture.role"
+      ]
+    },
+    {
+      "id": "PG-BKP-001",
+      "area": "backup",
+      "severity": "High",
+      "title": "WAL archiving is off",
+      "detail": "archive_mode is off, so point in time recovery is not possible from this server; recovery is limited to the last full backup taken by external tooling.",
+      "recommendation": "Enable archive_mode with an archive_command or a backup tool that manages WAL (pgBackRest, Barman, or the cloud provider's PITR), then run a timed restore test.",
+      "effort": "Medium",
+      "evidence": [
+        "backup.settings"
+      ]
+    },
+    {
+      "id": "PG-CHG-001",
+      "area": "change_management",
+      "severity": "Medium",
+      "title": "No schema migration history table found",
+      "detail": "None of the common migration tools (Flyway, Liquibase, Alembic, Django, Prisma, Knex, goose, EF) left a history table, so schema changes are probably applied by hand.",
+      "recommendation": "Adopt one migration tool and put every DDL change in version control with a review step; start by baselining the current schema.",
+      "effort": "Medium",
+      "evidence": [
+        "change_management.migration_tables"
+      ]
+    },
+    {
+      "id": "PG-CHG-002",
+      "area": "change_management",
+      "severity": "Low",
+      "title": "DDL is not logged",
+      "detail": "log_statement is none and there are no event triggers, so there is no record of who changed the schema and when.",
+      "recommendation": "Set log_statement to ddl (no restart needed) so every schema change lands in the server log.",
+      "effort": "Small",
+      "evidence": [
+        "change_management.ddl_logging",
+        "change_management.event_triggers"
+      ]
+    },
+    {
+      "id": "PG-ACC-001",
+      "area": "access",
+      "severity": "Low",
+      "title": "Login roles have no password expiry",
+      "detail": "2 login role(s) have no VALID UNTIL date: discovery, importer.",
+      "recommendation": "Decide a rotation period for human accounts and set VALID UNTIL; keep service accounts on vault managed rotation.",
+      "effort": "Small",
+      "evidence": [
+        "access.roles"
+      ]
+    },
+    {
+      "id": "PG-CST-001",
+      "area": "cost",
+      "severity": "Low",
+      "title": "2 index(es) have never been scanned",
+      "detail": "Indexes with zero scans since statistics reset cost write time and disk: orders_status_idx (16 kB), ix_import_runs_hash (16 kB).",
+      "recommendation": "Confirm the statistics window covers a full business cycle, then drop the unused ones with DROP INDEX CONCURRENTLY.",
+      "effort": "Small",
+      "evidence": [
+        "cost.unused_indexes"
+      ]
+    },
+    {
+      "id": "PG-MON-001",
+      "area": "monitoring",
+      "severity": "Medium",
+      "title": "pg_stat_statements is not installed",
+      "detail": "Without it there is no per query view of time, calls and I/O, so slow query work is guesswork.",
+      "recommendation": "Add pg_stat_statements to shared_preload_libraries (restart) and CREATE EXTENSION it in each database.",
+      "effort": "Small",
+      "evidence": [
+        "monitoring.pg_stat_statements"
+      ]
+    },
+    {
+      "id": "PG-MON-002",
+      "area": "monitoring",
+      "severity": "Medium",
+      "title": "Slow statements are not logged",
+      "detail": "log_min_duration_statement is `-1`, so no statement is ever written to the log by duration.",
+      "recommendation": "Set log_min_duration_statement to a value such as 1000 ms (no restart) and review the log weekly.",
+      "effort": "Small",
+      "evidence": [
+        "monitoring.settings"
+      ]
+    },
+    {
+      "id": "PG-MON-003",
+      "area": "monitoring",
+      "severity": "Low",
+      "title": "track_io_timing is off",
+      "detail": "I/O time per query is not recorded, which removes a cheap diagnostic.",
+      "recommendation": "Set track_io_timing to on; the cost is negligible on modern hardware.",
+      "effort": "Small",
+      "evidence": [
+        "monitoring.settings"
+      ]
+    },
+    {
+      "id": "PG-MON-004",
+      "area": "monitoring",
+      "severity": "Low",
+      "title": "log_lock_waits is off",
+      "detail": "lock waits over deadlock_timeout are not logged, which removes a cheap diagnostic.",
+      "recommendation": "Set log_lock_waits to on; the cost is negligible on modern hardware.",
+      "effort": "Small",
+      "evidence": [
+        "monitoring.settings"
+      ]
+    },
+    {
+      "id": "PG-MON-005",
+      "area": "monitoring",
+      "severity": "Info",
+      "title": "Server log relies on the service wrapper",
+      "detail": "logging_collector is off and log_destination is not syslog; on Debian and Ubuntu packages the cluster wrapper captures stderr into /var/log/postgresql, on other installs the lines may be lost.",
+      "recommendation": "Confirm where the log lands and that it rotates; otherwise enable logging_collector with daily rotation or route to syslog or the cloud log service.",
+      "effort": "Small",
+      "evidence": [
+        "monitoring.settings"
+      ]
+    },
+    {
+      "id": "PG-OPS-001",
+      "area": "operations",
+      "severity": "Low",
+      "title": "1 table(s) have no primary key",
+      "detail": "Tables without a primary key cannot be logically replicated by default and make upserts and deduplication awkward: public.audit_log.",
+      "recommendation": "Add a surrogate or natural primary key to each, starting with the largest.",
+      "effort": "Small",
+      "evidence": [
+        "operations.tables_without_pk"
+      ]
+    }
+  ],
+  "unknowns": [
+    {
+      "area": "backup",
+      "question": "Backup schedule, retention and the date of the last successful restore test",
+      "how_to_obtain": "Ask the operations owner for the backup job definition, retention policy and restore test log; the database cannot report these",
+      "evidence": [
+        "backup.backup_tooling_note"
+      ]
+    }
+  ]
+}

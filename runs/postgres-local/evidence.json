@@ -1,0 +1,879 @@
+{
+  "inventory": {
+    "version": {
+      "ok": true,
+      "sql": "SELECT version() AS version, current_setting('server_version') AS server_version, pg_postmaster_start_time() AS started_at, now() - pg_postmaster_start_time() AS uptime",
+      "rows": [
+        {
+          "version": "PostgreSQL 16.13 (Ubuntu 16.13-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit",
+          "server_version": "16.13 (Ubuntu 16.13-0ubuntu0.24.04.1)",
+          "started_at": "2026-09-06 04:32:19.508837+00:00",
+          "uptime": "0:18:49.016104"
+        }
+      ]
+    },
+    "databases": {
+      "ok": true,
+      "sql": "SELECT datname, pg_database_size(datname) AS size_bytes, pg_size_pretty(pg_database_size(datname)) AS size, datallowconn, datconnlimit, age(datfrozenxid) AS xid_age FROM pg_database WHERE NOT datistemplate ORDER BY size_bytes DESC",
+      "rows": [
+        {
+          "datname": "importer_demo",
+          "size_bytes": 8780823,
+          "size": "8575 kB",
+          "datallowconn": true,
+          "datconnlimit": -1,
+          "xid_age": 138
+        },
+        {
+          "datname": "proofdb",
+          "size_bytes": 7781399,
+          "size": "7599 kB",
+          "datallowconn": true,
+          "datconnlimit": -1,
+          "xid_age": 138
+        },
+        {
+          "datname": "postgres",
+          "size_bytes": 7683095,
+          "size": "7503 kB",
+          "datallowconn": true,
+          "datconnlimit": -1,
+          "xid_age": 138
+        }
+      ]
+    },
+    "extensions": {
+      "ok": true,
+      "sql": "SELECT extname, extversion FROM pg_extension ORDER BY extname",
+      "rows": [
+        {
+          "extname": "plpgsql",
+          "extversion": "1.0"
+        }
+      ]
+    },
+    "core_settings": {
+      "ok": true,
+      "sql": "SELECT name, setting, unit, source FROM pg_settings WHERE name = ANY(%s) ORDER BY name",
+      "rows": [
+        {
+          "name": "data_directory",
+          "setting": "/var/lib/postgresql/16/main",
+          "unit": null,
+          "source": "override"
+        },
+        {
+          "name": "effective_cache_size",
+          "setting": "524288",
+          "unit": "8kB",
+          "source": "default"
+        },
+        {
+          "name": "listen_addresses",
+          "setting": "localhost",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "maintenance_work_mem",
+          "setting": "65536",
+          "unit": "kB",
+          "source": "default"
+        },
+        {
+          "name": "max_connections",
+          "setting": "100",
+          "unit": null,
+          "source": "configuration file"
+        },
+        {
+          "name": "port",
+          "setting": "5432",
+          "unit": null,
+          "source": "configuration file"
+        },
+        {
+          "name": "server_encoding",
+          "setting": "UTF8",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "shared_buffers",
+          "setting": "16384",
+          "unit": "8kB",
+          "source": "configuration file"
+        },
+        {
+          "name": "work_mem",
+          "setting": "4096",
+          "unit": "kB",
+          "source": "default"
+        }
+      ]
+    }
+  },
+  "architecture": {
+    "role": {
+      "ok": true,
+      "sql": "SELECT pg_is_in_recovery() AS in_recovery",
+      "rows": [
+        {
+          "in_recovery": false
+        }
+      ]
+    },
+    "connections": {
+      "ok": true,
+      "sql": "SELECT datname, usename, application_name, state, count(*) AS n FROM pg_stat_activity WHERE datname IS NOT NULL GROUP BY 1,2,3,4 ORDER BY n DESC LIMIT 50",
+      "rows": [
+        {
+          "datname": "importer_demo",
+          "usename": "discovery",
+          "application_name": "",
+          "state": "active",
+          "n": 1
+        }
+      ]
+    },
+    "largest_tables": {
+      "ok": true,
+      "sql": "SELECT n.nspname AS schema, c.relname AS table, pg_total_relation_size(c.oid) AS total_bytes, pg_size_pretty(pg_total_relation_size(c.oid)) AS total, c.reltuples::bigint AS est_rows FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r','p') AND n.nspname NOT IN ('pg_catalog','information_schema') ORDER BY total_bytes DESC LIMIT 25",
+      "rows": [
+        {
+          "schema": "public",
+          "table": "orders",
+          "total_bytes": 65536,
+          "total": "64 kB",
+          "est_rows": 4
+        },
+        {
+          "schema": "public",
+          "table": "customers",
+          "total_bytes": 49152,
+          "total": "48 kB",
+          "est_rows": -1
+        },
+        {
+          "schema": "public",
+          "table": "import_runs",
+          "total_bytes": 49152,
+          "total": "48 kB",
+          "est_rows": -1
+        },
+        {
+          "schema": "public",
+          "table": "import_rejects",
+          "total_bytes": 32768,
+          "total": "32 kB",
+          "est_rows": -1
+        },
+        {
+          "schema": "public",
+          "table": "audit_log",
+          "total_bytes": 16384,
+          "total": "16 kB",
+          "est_rows": -1
+        }
+      ]
+    },
+    "logical_replication": {
+      "ok": true,
+      "sql": "SELECT (SELECT count(*) FROM pg_publication) AS publications, (SELECT count(*) FROM pg_subscription) AS subscriptions",
+      "rows": [
+        {
+          "publications": 0,
+          "subscriptions": 0
+        }
+      ]
+    },
+    "foreign_servers": {
+      "ok": true,
+      "sql": "SELECT srvname, fdwname FROM pg_foreign_server s JOIN pg_foreign_data_wrapper w ON w.oid = s.srvfdw",
+      "rows": []
+    }
+  },
+  "ha_dr": {
+    "replication": {
+      "ok": true,
+      "sql": "SELECT client_addr, application_name, state, sync_state, write_lag, flush_lag, replay_lag FROM pg_stat_replication",
+      "rows": []
+    },
+    "settings": {
+      "ok": true,
+      "sql": "SELECT name, setting, unit, source FROM pg_settings WHERE name = ANY(%s) ORDER BY name",
+      "rows": [
+        {
+          "name": "archive_command",
+          "setting": "(disabled)",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "archive_mode",
+          "setting": "off",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "archive_timeout",
+          "setting": "0",
+          "unit": "s",
+          "source": "default"
+        },
+        {
+          "name": "hot_standby",
+          "setting": "on",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "max_wal_senders",
+          "setting": "10",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "primary_conninfo",
+          "setting": "",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "restore_command",
+          "setting": "",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "synchronous_commit",
+          "setting": "on",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "synchronous_standby_names",
+          "setting": "",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "wal_keep_size",
+          "setting": "0",
+          "unit": "MB",
+          "source": "default"
+        },
+        {
+          "name": "wal_level",
+          "setting": "replica",
+          "unit": null,
+          "source": "default"
+        }
+      ]
+    },
+    "archiver": {
+      "ok": true,
+      "sql": "SELECT archived_count, last_archived_wal, last_archived_time, failed_count, last_failed_wal, last_failed_time FROM pg_stat_archiver",
+      "rows": [
+        {
+          "archived_count": 0,
+          "last_archived_wal": null,
+          "last_archived_time": null,
+          "failed_count": 0,
+          "last_failed_wal": null,
+          "last_failed_time": null
+        }
+      ]
+    },
+    "slots": {
+      "ok": true,
+      "sql": "SELECT slot_name, slot_type, active, pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained_wal FROM pg_replication_slots",
+      "rows": []
+    }
+  },
+  "change_management": {
+    "migration_tables": {
+      "ok": true,
+      "sql": "SELECT table_schema, table_name FROM information_schema.tables WHERE table_name IN ('flyway_schema_history','schema_migrations','alembic_version','django_migrations','databasechangelog','knex_migrations','__EFMigrationsHistory','prisma_migrations','_prisma_migrations','goose_db_version') ORDER BY 1,2",
+      "rows": []
+    },
+    "ddl_logging": {
+      "ok": true,
+      "sql": "SELECT name, setting, unit, source FROM pg_settings WHERE name = ANY(%s) ORDER BY name",
+      "rows": [
+        {
+          "name": "log_line_prefix",
+          "setting": "%m [%p] %q%u@%d ",
+          "unit": null,
+          "source": "configuration file"
+        },
+        {
+          "name": "log_min_duration_statement",
+          "setting": "-1",
+          "unit": "ms",
+          "source": "default"
+        },
+        {
+          "name": "log_statement",
+          "setting": "none",
+          "unit": null,
+          "source": "default"
+        }
+      ]
+    },
+    "event_triggers": {
+      "ok": true,
+      "sql": "SELECT evtname, evtevent, evtenabled FROM pg_event_trigger",
+      "rows": []
+    }
+  },
+  "security": {
+    "ssl": {
+      "ok": true,
+      "sql": "SELECT name, setting, unit, source FROM pg_settings WHERE name = ANY(%s) ORDER BY name",
+      "rows": [
+        {
+          "name": "listen_addresses",
+          "setting": "localhost",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "password_encryption",
+          "setting": "scram-sha-256",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "ssl",
+          "setting": "on",
+          "unit": null,
+          "source": "configuration file"
+        },
+        {
+          "name": "ssl_cert_file",
+          "setting": "/etc/ssl/certs/ssl-cert-snakeoil.pem",
+          "unit": null,
+          "source": "configuration file"
+        },
+        {
+          "name": "ssl_key_file",
+          "setting": "/etc/ssl/private/ssl-cert-snakeoil.key",
+          "unit": null,
+          "source": "configuration file"
+        },
+        {
+          "name": "ssl_min_protocol_version",
+          "setting": "TLSv1.2",
+          "unit": null,
+          "source": "default"
+        }
+      ]
+    },
+    "hba": {
+      "ok": true,
+      "sql": "SELECT line_number, type, database, user_name, address, auth_method FROM pg_hba_file_rules ORDER BY line_number",
+      "rows": [
+        {
+          "line_number": 118,
+          "type": "local",
+          "database": [
+            "all"
+          ],
+          "user_name": [
+            "postgres"
+          ],
+          "address": null,
+          "auth_method": "peer"
+        },
+        {
+          "line_number": 123,
+          "type": "local",
+          "database": [
+            "all"
+          ],
+          "user_name": [
+            "all"
+          ],
+          "address": null,
+          "auth_method": "peer"
+        },
+        {
+          "line_number": 125,
+          "type": "host",
+          "database": [
+            "all"
+          ],
+          "user_name": [
+            "all"
+          ],
+          "address": "127.0.0.1",
+          "auth_method": "scram-sha-256"
+        },
+        {
+          "line_number": 127,
+          "type": "host",
+          "database": [
+            "all"
+          ],
+          "user_name": [
+            "all"
+          ],
+          "address": "::1",
+          "auth_method": "scram-sha-256"
+        },
+        {
+          "line_number": 130,
+          "type": "local",
+          "database": [
+            "replication"
+          ],
+          "user_name": [
+            "all"
+          ],
+          "address": null,
+          "auth_method": "peer"
+        },
+        {
+          "line_number": 131,
+          "type": "host",
+          "database": [
+            "replication"
+          ],
+          "user_name": [
+            "all"
+          ],
+          "address": "127.0.0.1",
+          "auth_method": "scram-sha-256"
+        },
+        {
+          "line_number": 132,
+          "type": "host",
+          "database": [
+            "replication"
+          ],
+          "user_name": [
+            "all"
+          ],
+          "address": "::1",
+          "auth_method": "scram-sha-256"
+        }
+      ]
+    },
+    "ssl_connections": {
+      "ok": true,
+      "sql": "SELECT ssl, count(*) AS n FROM pg_stat_ssl s JOIN pg_stat_activity a USING (pid) WHERE a.datname IS NOT NULL GROUP BY ssl",
+      "rows": [
+        {
+          "ssl": true,
+          "n": 1
+        }
+      ]
+    }
+  },
+  "access": {
+    "roles": {
+      "ok": true,
+      "sql": "SELECT rolname, rolsuper, rolcreaterole, rolcreatedb, rolcanlogin, rolbypassrls, rolreplication, rolconnlimit, rolvaliduntil FROM pg_roles WHERE rolname NOT LIKE 'pg\\_%' ORDER BY rolsuper DESC, rolname",
+      "rows": [
+        {
+          "rolname": "postgres",
+          "rolsuper": true,
+          "rolcreaterole": true,
+          "rolcreatedb": true,
+          "rolcanlogin": true,
+          "rolbypassrls": true,
+          "rolreplication": true,
+          "rolconnlimit": -1,
+          "rolvaliduntil": null
+        },
+        {
+          "rolname": "discovery",
+          "rolsuper": false,
+          "rolcreaterole": false,
+          "rolcreatedb": false,
+          "rolcanlogin": true,
+          "rolbypassrls": false,
+          "rolreplication": false,
+          "rolconnlimit": -1,
+          "rolvaliduntil": null
+        },
+        {
+          "rolname": "importer",
+          "rolsuper": false,
+          "rolcreaterole": false,
+          "rolcreatedb": false,
+          "rolcanlogin": true,
+          "rolbypassrls": false,
+          "rolreplication": false,
+          "rolconnlimit": -1,
+          "rolvaliduntil": null
+        }
+      ]
+    },
+    "public_schema": {
+      "ok": true,
+      "sql": "SELECT nspname, nspacl FROM pg_namespace WHERE nspname = 'public'",
+      "rows": [
+        {
+          "nspname": "public",
+          "nspacl": [
+            "pg_database_owner=UC/pg_database_owner",
+            "=U/pg_database_owner",
+            "discovery=U/pg_database_owner"
+          ]
+        }
+      ]
+    },
+    "db_acl": {
+      "ok": true,
+      "sql": "SELECT datname, datacl FROM pg_database WHERE NOT datistemplate",
+      "rows": [
+        {
+          "datname": "postgres",
+          "datacl": null
+        },
+        {
+          "datname": "importer_demo",
+          "datacl": [
+            "=Tc/importer",
+            "importer=CTc/importer",
+            "discovery=c/importer"
+          ]
+        },
+        {
+          "datname": "proofdb",
+          "datacl": [
+            "=Tc/postgres",
+            "postgres=CTc/postgres",
+            "discovery=c/postgres"
+          ]
+        }
+      ]
+    }
+  },
+  "backup": {
+    "settings": {
+      "ok": true,
+      "sql": "SELECT name, setting, unit, source FROM pg_settings WHERE name = ANY(%s) ORDER BY name",
+      "rows": [
+        {
+          "name": "archive_command",
+          "setting": "(disabled)",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "archive_mode",
+          "setting": "off",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "checkpoint_timeout",
+          "setting": "300",
+          "unit": "s",
+          "source": "default"
+        },
+        {
+          "name": "full_page_writes",
+          "setting": "on",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "max_wal_size",
+          "setting": "1024",
+          "unit": "MB",
+          "source": "configuration file"
+        },
+        {
+          "name": "wal_level",
+          "setting": "replica",
+          "unit": null,
+          "source": "default"
+        }
+      ]
+    },
+    "archiver": {
+      "ok": true,
+      "sql": "SELECT archived_count, last_archived_wal, last_archived_time, failed_count, last_failed_wal, last_failed_time FROM pg_stat_archiver",
+      "rows": [
+        {
+          "archived_count": 0,
+          "last_archived_wal": null,
+          "last_archived_time": null,
+          "failed_count": 0,
+          "last_failed_wal": null,
+          "last_failed_time": null
+        }
+      ]
+    },
+    "backup_tooling_note": {
+      "ok": true,
+      "sql": "",
+      "rows": [
+        {
+          "note": "Backup jobs, retention and restore tests live outside the database; request the backup schedule, retention policy and the last restore test record"
+        }
+      ]
+    }
+  },
+  "cost": {
+    "cache_hit": {
+      "ok": true,
+      "sql": "SELECT datname, blks_hit, blks_read, CASE WHEN blks_hit + blks_read = 0 THEN NULL ELSE round(100.0 * blks_hit / (blks_hit + blks_read), 2) END AS cache_hit_pct, temp_files, pg_size_pretty(temp_bytes) AS temp_bytes, deadlocks, stats_reset FROM pg_stat_database WHERE datname NOT LIKE 'template%' ORDER BY blks_read DESC",
+      "rows": [
+        {
+          "datname": "importer_demo",
+          "blks_hit": 21070,
+          "blks_read": 355,
+          "cache_hit_pct": 98.34,
+          "temp_files": 0,
+          "temp_bytes": "0 bytes",
+          "deadlocks": 0,
+          "stats_reset": null
+        },
+        {
+          "datname": "postgres",
+          "blks_hit": 3492,
+          "blks_read": 147,
+          "cache_hit_pct": 95.96,
+          "temp_files": 0,
+          "temp_bytes": "0 bytes",
+          "deadlocks": 0,
+          "stats_reset": null
+        },
+        {
+          "datname": "proofdb",
+          "blks_hit": 3176,
+          "blks_read": 147,
+          "cache_hit_pct": 95.58,
+          "temp_files": 0,
+          "temp_bytes": "0 bytes",
+          "deadlocks": 0,
+          "stats_reset": null
+        }
+      ]
+    },
+    "unused_indexes": {
+      "ok": true,
+      "sql": "SELECT s.schemaname, s.relname AS table, s.indexrelname AS index, s.idx_scan, pg_size_pretty(pg_relation_size(s.indexrelid)) AS size FROM pg_stat_user_indexes s JOIN pg_index i ON i.indexrelid = s.indexrelid WHERE s.idx_scan = 0 AND NOT i.indisunique AND NOT i.indisprimary ORDER BY pg_relation_size(s.indexrelid) DESC LIMIT 25",
+      "rows": [
+        {
+          "schemaname": "public",
+          "table": "orders",
+          "index": "orders_status_idx",
+          "idx_scan": 0,
+          "size": "16 kB"
+        },
+        {
+          "schemaname": "public",
+          "table": "import_runs",
+          "index": "ix_import_runs_hash",
+          "idx_scan": 0,
+          "size": "16 kB"
+        }
+      ]
+    },
+    "dead_tuples": {
+      "ok": true,
+      "sql": "SELECT schemaname, relname, n_live_tup, n_dead_tup, CASE WHEN n_live_tup = 0 THEN NULL ELSE round(100.0 * n_dead_tup / n_live_tup, 1) END AS dead_pct, last_autovacuum, last_autoanalyze FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 25",
+      "rows": [
+        {
+          "schemaname": "public",
+          "relname": "import_rejects",
+          "n_live_tup": 0,
+          "n_dead_tup": 0,
+          "dead_pct": null,
+          "last_autovacuum": null,
+          "last_autoanalyze": null
+        },
+        {
+          "schemaname": "public",
+          "relname": "orders",
+          "n_live_tup": 0,
+          "n_dead_tup": 0,
+          "dead_pct": null,
+          "last_autovacuum": null,
+          "last_autoanalyze": null
+        },
+        {
+          "schemaname": "public",
+          "relname": "customers",
+          "n_live_tup": 0,
+          "n_dead_tup": 0,
+          "dead_pct": null,
+          "last_autovacuum": null,
+          "last_autoanalyze": null
+        },
+        {
+          "schemaname": "public",
+          "relname": "audit_log",
+          "n_live_tup": 3,
+          "n_dead_tup": 0,
+          "dead_pct": 0.0,
+          "last_autovacuum": null,
+          "last_autoanalyze": null
+        },
+        {
+          "schemaname": "public",
+          "relname": "import_runs",
+          "n_live_tup": 0,
+          "n_dead_tup": 0,
+          "dead_pct": null,
+          "last_autovacuum": null,
+          "last_autoanalyze": null
+        }
+      ]
+    },
+    "connections_vs_max": {
+      "ok": true,
+      "sql": "SELECT (SELECT count(*) FROM pg_stat_activity) AS current_connections, current_setting('max_connections')::int AS max_connections",
+      "rows": [
+        {
+          "current_connections": 6,
+          "max_connections": 100
+        }
+      ]
+    }
+  },
+  "monitoring": {
+    "settings": {
+      "ok": true,
+      "sql": "SELECT name, setting, unit, source FROM pg_settings WHERE name = ANY(%s) ORDER BY name",
+      "rows": [
+        {
+          "name": "autovacuum",
+          "setting": "on",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "log_autovacuum_min_duration",
+          "setting": "600000",
+          "unit": "ms",
+          "source": "default"
+        },
+        {
+          "name": "log_checkpoints",
+          "setting": "on",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "log_destination",
+          "setting": "stderr",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "log_lock_waits",
+          "setting": "off",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "log_min_duration_statement",
+          "setting": "-1",
+          "unit": "ms",
+          "source": "default"
+        },
+        {
+          "name": "logging_collector",
+          "setting": "off",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "shared_preload_libraries",
+          "setting": "",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "track_activities",
+          "setting": "on",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "track_counts",
+          "setting": "on",
+          "unit": null,
+          "source": "default"
+        },
+        {
+          "name": "track_io_timing",
+          "setting": "off",
+          "unit": null,
+          "source": "default"
+        }
+      ]
+    },
+    "pg_stat_statements": {
+      "ok": true,
+      "sql": "SELECT count(*) AS installed FROM pg_extension WHERE extname = 'pg_stat_statements'",
+      "rows": [
+        {
+          "installed": 0
+        }
+      ]
+    }
+  },
+  "operations": {
+    "long_running": {
+      "ok": true,
+      "sql": "SELECT pid, datname, usename, state, now() - query_start AS running_for, left(query, 120) AS query FROM pg_stat_activity WHERE state <> 'idle' AND now() - query_start > interval '5 minutes' ORDER BY query_start LIMIT 20",
+      "rows": []
+    },
+    "lock_waits": {
+      "ok": true,
+      "sql": "SELECT count(*) AS waiting FROM pg_stat_activity WHERE wait_event_type = 'Lock'",
+      "rows": [
+        {
+          "waiting": 0
+        }
+      ]
+    },
+    "wraparound": {
+      "ok": true,
+      "sql": "SELECT datname, age(datfrozenxid) AS xid_age, current_setting('autovacuum_freeze_max_age')::bigint AS freeze_max_age, round(100.0 * age(datfrozenxid) / current_setting('autovacuum_freeze_max_age')::bigint, 1) AS pct_of_limit FROM pg_database WHERE NOT datistemplate ORDER BY xid_age DESC",
+      "rows": [
+        {
+          "datname": "postgres",
+          "xid_age": 138,
+          "freeze_max_age": 200000000,
+          "pct_of_limit": 0.0
+        },
+        {
+          "datname": "importer_demo",
+          "xid_age": 138,
+          "freeze_max_age": 200000000,
+          "pct_of_limit": 0.0
+        },
+        {
+          "datname": "proofdb",
+          "xid_age": 138,
+          "freeze_max_age": 200000000,
+          "pct_of_limit": 0.0
+        }
+      ]
+    },
+    "invalid_indexes": {
+      "ok": true,
+      "sql": "SELECT n.nspname, c.relname FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid JOIN pg_namespace n ON n.oid = c.relnamespace WHERE NOT i.indisvalid",
+      "rows": []
+    },
+    "tables_without_pk": {
+      "ok": true,
+      "sql": "SELECT n.nspname AS schema, c.relname AS table FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind = 'r' AND n.nspname NOT IN ('pg_catalog','information_schema') AND NOT EXISTS (SELECT 1 FROM pg_constraint k WHERE k.conrelid = c.oid AND k.contype = 'p') ORDER BY 1,2 LIMIT 50",
+      "rows": [
+        {
+          "schema": "public",
+          "table": "audit_log"
+        }
+      ]
+    }
+  }
+}

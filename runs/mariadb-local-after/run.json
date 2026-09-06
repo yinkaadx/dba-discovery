@@ -1,0 +1,26 @@
+{
+  "run_name": "mariadb-local-after",
+  "engine": "mysql",
+  "collected_at": "2026-09-06 04:51 UTC",
+  "collector_user": "discovery",
+  "target": "127.0.0.1:3306",
+  "environment": "development",
+  "owner": "Yinka",
+  "platform": {
+    "engine": "mysql",
+    "flavour": "MariaDB",
+    "version": "10.11.14-MariaDB-0ubuntu0.24.04.1",
+    "host": "127.0.0.1",
+    "port": 3306,
+    "databases": [
+      {
+        "name": "glpi",
+        "size_bytes": 48578560
+      },
+      {
+        "name": "shopdemo",
+        "size_bytes": 115712
+      }
+    ]
+  }
+}

@@ -1,0 +1,738 @@
+{
+  "inventory": {
+    "version": {
+      "ok": true,
+      "sql": "SELECT VERSION() AS version, @@version_comment AS flavour, @@hostname AS host, @@port AS port",
+      "rows": [
+        {
+          "version": "10.11.14-MariaDB-0ubuntu0.24.04.1",
+          "flavour": "Ubuntu 24.04",
+          "host": "vm",
+          "port": 3306
+        }
+      ]
+    },
+    "uptime": {
+      "ok": true,
+      "sql": "SHOW GLOBAL STATUS LIKE 'Uptime'",
+      "rows": [
+        {
+          "Variable_name": "Uptime",
+          "Value": "875"
+        }
+      ]
+    },
+    "databases": {
+      "ok": true,
+      "sql": "SELECT table_schema AS db, ROUND(SUM(data_length + index_length)) AS size_bytes, COUNT(*) AS tables FROM information_schema.tables WHERE table_schema NOT IN ('mysql','information_schema','performance_schema','sys') GROUP BY table_schema ORDER BY size_bytes DESC",
+      "rows": [
+        {
+          "db": "glpi",
+          "size_bytes": 48578560.0,
+          "tables": 442
+        },
+        {
+          "db": "shopdemo",
+          "size_bytes": 115712.0,
+          "tables": 2
+        }
+      ]
+    },
+    "engines": {
+      "ok": true,
+      "sql": "SELECT engine, COUNT(*) AS tables FROM information_schema.tables WHERE table_schema NOT IN ('mysql','information_schema','performance_schema','sys') GROUP BY engine",
+      "rows": [
+        {
+          "engine": "InnoDB",
+          "tables": 443
+        },
+        {
+          "engine": "MyISAM",
+          "tables": 1
+        }
+      ]
+    },
+    "core_settings": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "character_set_server",
+          "Value": "utf8mb4"
+        },
+        {
+          "Variable_name": "collation_server",
+          "Value": "utf8mb4_general_ci"
+        },
+        {
+          "Variable_name": "datadir",
+          "Value": "/var/lib/mysql/"
+        },
+        {
+          "Variable_name": "innodb_buffer_pool_size",
+          "Value": "134217728"
+        },
+        {
+          "Variable_name": "innodb_file_per_table",
+          "Value": "ON"
+        },
+        {
+          "Variable_name": "max_connections",
+          "Value": "151"
+        },
+        {
+          "Variable_name": "sql_mode",
+          "Value": "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+        },
+        {
+          "Variable_name": "time_zone",
+          "Value": "SYSTEM"
+        }
+      ]
+    }
+  },
+  "architecture": {
+    "connections": {
+      "ok": true,
+      "sql": "SELECT user, host, db, command, COUNT(*) AS n FROM information_schema.processlist GROUP BY 1,2,3,4 ORDER BY n DESC LIMIT 50",
+      "rows": [
+        {
+          "user": "discovery",
+          "host": "localhost:60880",
+          "db": "shopdemo",
+          "command": "Query",
+          "n": 1
+        }
+      ]
+    },
+    "largest_tables": {
+      "ok": true,
+      "sql": "SELECT table_schema, table_name, engine, table_rows, data_length + index_length AS total_bytes, data_free FROM information_schema.tables WHERE table_schema NOT IN ('mysql','information_schema','performance_schema','sys') ORDER BY total_bytes DESC LIMIT 25",
+      "rows": [
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_tickets",
+          "engine": "InnoDB",
+          "table_rows": 2,
+          "total_bytes": 540672,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_users",
+          "engine": "InnoDB",
+          "table_rows": 8,
+          "total_bytes": 409600,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_softwarelicenses",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 393216,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_printers",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 393216,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_projects",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 376832,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_networkequipments",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 360448,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_phones",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 360448,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_peripherals",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 344064,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_itemtranslations_itemtranslations",
+          "engine": "InnoDB",
+          "table_rows": 881,
+          "total_bytes": 344064,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_monitors",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 344064,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_cables",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 344064,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_projecttasks",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 344064,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_computers",
+          "engine": "InnoDB",
+          "table_rows": 2,
+          "total_bytes": 344064,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_changes",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 344064,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_itilcategories",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 327680,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_problems",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 327680,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_databaseinstances",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 311296,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_assets_assets",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 311296,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_unmanageds",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 311296,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_groups",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 294912,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_appliances",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 294912,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_tickettasks",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 294912,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_projecttasktemplates",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 278528,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_problemtasks",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 262144,
+          "data_free": 0
+        },
+        {
+          "table_schema": "glpi",
+          "table_name": "glpi_racks",
+          "engine": "InnoDB",
+          "table_rows": 0,
+          "total_bytes": 262144,
+          "data_free": 0
+        }
+      ]
+    },
+    "server_id": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "read_only",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "server_id",
+          "Value": "1"
+        }
+      ]
+    }
+  },
+  "ha_dr": {
+    "binlog": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "binlog_expire_logs_seconds",
+          "Value": "864000"
+        },
+        {
+          "Variable_name": "binlog_format",
+          "Value": "MIXED"
+        },
+        {
+          "Variable_name": "expire_logs_days",
+          "Value": "10.000000"
+        },
+        {
+          "Variable_name": "gtid_strict_mode",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "innodb_flush_log_at_trx_commit",
+          "Value": "1"
+        },
+        {
+          "Variable_name": "log_bin",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "log_slave_updates",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "sync_binlog",
+          "Value": "0"
+        }
+      ]
+    },
+    "replica_status": {
+      "ok": true,
+      "sql": "SHOW REPLICA STATUS",
+      "rows": []
+    },
+    "replicas_connected": {
+      "ok": true,
+      "sql": "SELECT COUNT(*) AS replicas FROM information_schema.processlist WHERE command IN ('Binlog Dump','Binlog Dump GTID')",
+      "rows": [
+        {
+          "replicas": 0
+        }
+      ]
+    }
+  },
+  "change_management": {
+    "migration_tables": {
+      "ok": true,
+      "sql": "SELECT table_schema, table_name FROM information_schema.tables WHERE table_name IN ('flyway_schema_history','schema_migrations','alembic_version','django_migrations','databasechangelog','knex_migrations','__EFMigrationsHistory','_prisma_migrations','goose_db_version','phinxlog')",
+      "rows": []
+    },
+    "ddl_logging": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "general_log",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "log_output",
+          "Value": "FILE"
+        }
+      ]
+    }
+  },
+  "security": {
+    "ssl": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "have_ssl",
+          "Value": "DISABLED"
+        },
+        {
+          "Variable_name": "require_secure_transport",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "ssl_ca",
+          "Value": ""
+        },
+        {
+          "Variable_name": "ssl_cert",
+          "Value": ""
+        },
+        {
+          "Variable_name": "ssl_key",
+          "Value": ""
+        },
+        {
+          "Variable_name": "tls_version",
+          "Value": "TLSv1.2,TLSv1.3"
+        }
+      ]
+    },
+    "auth_plugins": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": []
+    },
+    "local_infile": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "local_infile",
+          "Value": "ON"
+        },
+        {
+          "Variable_name": "secure_file_priv",
+          "Value": ""
+        },
+        {
+          "Variable_name": "skip_name_resolve",
+          "Value": "OFF"
+        }
+      ]
+    }
+  },
+  "access": {
+    "users": {
+      "ok": true,
+      "sql": "SELECT User AS user, Host AS host, CASE WHEN JSON_EXTRACT(Priv, '$.auth_or[*].plugin') LIKE '%unix_socket%' THEN 'unix_socket' ELSE COALESCE(JSON_VALUE(Priv, '$.plugin'), 'mysql_native_password') END AS plugin, IF(JSON_EXTRACT(Priv, '$.account_locked') = true, 'Y', 'N') AS account_locked, IF(COALESCE(JSON_VALUE(Priv, '$.authentication_string'), '') = '' AND JSON_EXTRACT(Priv, '$.auth_or') IS NULL AND COALESCE(JSON_VALUE(Priv, '$.plugin'), 'mysql_native_password') NOT IN ('unix_socket','auth_socket'), 1, 0) AS empty_password, FROM_UNIXTIME(JSON_VALUE(Priv, '$.password_last_changed')) AS password_last_changed FROM mysql.global_priv ORDER BY User, Host",
+      "rows": [
+        {
+          "user": "app",
+          "host": "%",
+          "plugin": "mysql_native_password",
+          "account_locked": "N",
+          "empty_password": 0,
+          "password_last_changed": "2026-09-06 04:27:32"
+        },
+        {
+          "user": "discovery",
+          "host": "localhost",
+          "plugin": "mysql_native_password",
+          "account_locked": "N",
+          "empty_password": 0,
+          "password_last_changed": "2026-09-06 04:27:32"
+        },
+        {
+          "user": "glpi",
+          "host": "localhost",
+          "plugin": "mysql_native_password",
+          "account_locked": "N",
+          "empty_password": 0,
+          "password_last_changed": "2026-08-30 14:07:28"
+        },
+        {
+          "user": "mariadb.sys",
+          "host": "localhost",
+          "plugin": "mysql_native_password",
+          "account_locked": "Y",
+          "empty_password": 1,
+          "password_last_changed": "1970-01-01 00:00:00"
+        },
+        {
+          "user": "mysql",
+          "host": "localhost",
+          "plugin": "unix_socket",
+          "account_locked": "N",
+          "empty_password": 0,
+          "password_last_changed": null
+        },
+        {
+          "user": "root",
+          "host": "localhost",
+          "plugin": "unix_socket",
+          "account_locked": "N",
+          "empty_password": 0,
+          "password_last_changed": null
+        }
+      ]
+    },
+    "global_privileges": {
+      "ok": true,
+      "sql": "SELECT grantee, GROUP_CONCAT(privilege_type ORDER BY privilege_type) AS privileges, MAX(is_grantable) AS grantable FROM information_schema.user_privileges GROUP BY grantee",
+      "rows": [
+        {
+          "grantee": "'app'@'%'",
+          "privileges": "USAGE",
+          "grantable": "NO"
+        },
+        {
+          "grantee": "'discovery'@'localhost'",
+          "privileges": "BINLOG MONITOR,PROCESS,SELECT,SHOW DATABASES,SLAVE MONITOR",
+          "grantable": "NO"
+        },
+        {
+          "grantee": "'glpi'@'localhost'",
+          "privileges": "USAGE",
+          "grantable": "NO"
+        },
+        {
+          "grantee": "'mariadb.sys'@'localhost'",
+          "privileges": "USAGE",
+          "grantable": "NO"
+        },
+        {
+          "grantee": "'mysql'@'localhost'",
+          "privileges": "ALTER,ALTER ROUTINE,BINLOG ADMIN,BINLOG MONITOR,BINLOG REPLAY,CONNECTION ADMIN,CREATE,CREATE ROUTINE,CREATE TABLESPACE,CREATE TEMPORARY TABLES,CREATE USER,CREATE VIEW,DELETE,DELETE HISTORY,DROP,EVENT,EXECUTE,FEDERATED ADMIN,FILE,INDEX,INSERT,LOCK TABLES,PROCESS,READ_ONLY ADMIN,REFERENCES,RELOAD,REPLICATION MASTER ADMIN,REPLICATION SLAVE,REPLICATION SLAVE ADMIN,SELECT,SET USER,SHOW DATABASES,SHOW VIEW,SHUTDOWN,SLAVE MONITOR,SUPER,TRIGGER,UPDATE",
+          "grantable": "YES"
+        },
+        {
+          "grantee": "'root'@'localhost'",
+          "privileges": "ALTER,ALTER ROUTINE,BINLOG ADMIN,BINLOG MONITOR,BINLOG REPLAY,CONNECTION ADMIN,CREATE,CREATE ROUTINE,CREATE TABLESPACE,CREATE TEMPORARY TABLES,CREATE USER,CREATE VIEW,DELETE,DELETE HISTORY,DROP,EVENT,EXECUTE,FEDERATED ADMIN,FILE,INDEX,INSERT,LOCK TABLES,PROCESS,READ_ONLY ADMIN,REFERENCES,RELOAD,REPLICATION MASTER ADMIN,REPLICATION SLAVE,REPLICATION SLAVE ADMIN,SELECT,SET USER,SHOW DATABASES,SHOW VIEW,SHUTDOWN,SLAVE MONITOR,SUPER,TRIGGER,UPDATE",
+          "grantable": "YES"
+        }
+      ]
+    },
+    "password_lifetime": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "default_password_lifetime",
+          "Value": "0"
+        },
+        {
+          "Variable_name": "disconnect_on_expired_password",
+          "Value": "OFF"
+        }
+      ]
+    }
+  },
+  "backup": {
+    "binlog_retention": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "binlog_expire_logs_seconds",
+          "Value": "864000"
+        },
+        {
+          "Variable_name": "binlog_format",
+          "Value": "MIXED"
+        },
+        {
+          "Variable_name": "expire_logs_days",
+          "Value": "10.000000"
+        },
+        {
+          "Variable_name": "gtid_strict_mode",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "innodb_flush_log_at_trx_commit",
+          "Value": "1"
+        },
+        {
+          "Variable_name": "log_bin",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "log_slave_updates",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "sync_binlog",
+          "Value": "0"
+        }
+      ]
+    },
+    "backup_tooling_note": {
+      "ok": true,
+      "sql": "",
+      "rows": [
+        {
+          "note": "Backups (mysqldump, mariabackup, xtrabackup, cloud snapshots), retention and restore tests live outside the server; request the schedule, retention policy and the last restore test record"
+        }
+      ]
+    }
+  },
+  "cost": {
+    "buffer_pool_vs_data": {
+      "ok": true,
+      "sql": "SELECT @@innodb_buffer_pool_size AS buffer_pool_bytes, (SELECT SUM(data_length + index_length) FROM information_schema.tables WHERE engine = 'InnoDB') AS innodb_data_bytes",
+      "rows": [
+        {
+          "buffer_pool_bytes": 134217728,
+          "innodb_data_bytes": 51494912.0
+        }
+      ]
+    },
+    "fragmentation": {
+      "ok": true,
+      "sql": "SELECT table_schema, table_name, data_free, data_length + index_length AS total_bytes FROM information_schema.tables WHERE data_free > 50*1024*1024 AND table_schema NOT IN ('mysql','information_schema','performance_schema','sys') ORDER BY data_free DESC LIMIT 25",
+      "rows": []
+    },
+    "connections_vs_max": {
+      "ok": true,
+      "sql": "SELECT (SELECT COUNT(*) FROM information_schema.processlist) AS current_connections, @@max_connections AS max_connections",
+      "rows": [
+        {
+          "current_connections": 1,
+          "max_connections": 151
+        }
+      ]
+    },
+    "status_counters": {
+      "ok": true,
+      "sql": "SHOW GLOBAL STATUS WHERE Variable_name IN ('Max_used_connections','Aborted_connects','Created_tmp_disk_tables','Innodb_buffer_pool_wait_free','Slow_queries','Threads_connected')",
+      "rows": [
+        {
+          "Variable_name": "Aborted_connects",
+          "Value": "1"
+        },
+        {
+          "Variable_name": "Created_tmp_disk_tables",
+          "Value": "216"
+        },
+        {
+          "Variable_name": "Innodb_buffer_pool_wait_free",
+          "Value": "0"
+        },
+        {
+          "Variable_name": "Max_used_connections",
+          "Value": "1"
+        },
+        {
+          "Variable_name": "Slow_queries",
+          "Value": "0"
+        },
+        {
+          "Variable_name": "Threads_connected",
+          "Value": "1"
+        }
+      ]
+    }
+  },
+  "monitoring": {
+    "settings": {
+      "ok": true,
+      "sql": "SHOW GLOBAL VARIABLES (filtered)",
+      "rows": [
+        {
+          "Variable_name": "innodb_monitor_enable",
+          "Value": ""
+        },
+        {
+          "Variable_name": "log_error",
+          "Value": ""
+        },
+        {
+          "Variable_name": "log_queries_not_using_indexes",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "log_warnings",
+          "Value": "2"
+        },
+        {
+          "Variable_name": "long_query_time",
+          "Value": "10.000000"
+        },
+        {
+          "Variable_name": "performance_schema",
+          "Value": "OFF"
+        },
+        {
+          "Variable_name": "slow_query_log",
+          "Value": "OFF"
+        }
+      ]
+    }
+  },
+  "operations": {
+    "long_running": {
+      "ok": true,
+      "sql": "SELECT id, user, host, db, command, time, state, LEFT(info, 120) AS query FROM information_schema.processlist WHERE command NOT IN ('Sleep','Binlog Dump','Binlog Dump GTID') AND time > 300 ORDER BY time DESC LIMIT 20",
+      "rows": []
+    },
+    "lock_waits": {
+      "ok": true,
+      "sql": "SELECT COUNT(*) AS waiting FROM information_schema.innodb_lock_waits",
+      "rows": [
+        {
+          "waiting": 0
+        }
+      ]
+    },
+    "tables_without_pk": {
+      "ok": true,
+      "sql": "SELECT t.table_schema, t.table_name, t.engine FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' AND t.table_schema NOT IN ('mysql','information_schema','performance_schema','sys') AND NOT EXISTS (SELECT 1 FROM information_schema.statistics s WHERE s.table_schema = t.table_schema AND s.table_name = t.table_name AND s.index_name = 'PRIMARY') ORDER BY 1,2 LIMIT 50",
+      "rows": []
+    },
+    "myisam_tables": {
+      "ok": true,
+      "sql": "SELECT table_schema, table_name FROM information_schema.tables WHERE engine = 'MyISAM' AND table_schema NOT IN ('mysql','information_schema','performance_schema','sys') LIMIT 50",
+      "rows": [
+        {
+          "table_schema": "shopdemo",
+          "table_name": "legacy_log"
+        }
+      ]
+    }
+  }
+}
