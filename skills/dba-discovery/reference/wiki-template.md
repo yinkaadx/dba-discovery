@@ -28,7 +28,7 @@ Unknown: question. How to obtain: ...
 
 ## Writing rules
 
-Write for a manager first and an engineer second: the summary and the prioritized table must stand alone; the appendix must let the engineer rerun everything.
+Write for a manager first and a DBA second: the summary and the prioritized table must stand alone; the appendix must let the DBA rerun everything.
 
 One finding, one weakness. Do not bundle three problems into one paragraph; each gets an id so it can be assigned and closed on its own.
 
