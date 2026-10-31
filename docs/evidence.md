@@ -1,6 +1,6 @@
 # Evidence log
 
-Everything below was captured on 6 September 2026 against a local PostgreSQL 16.13 and a local MariaDB 10.11.14, both queried with the least privilege discovery accounts from the reference files. Passwords are shown as PASSWORD.
+Everything below was captured on 6 September 2026 against a local PostgreSQL 16.13 and a local MariaDB 10.11.14, both queried with the least privilege discovery accounts from the reference files. Passwords are shown as PASSWORD, and the checkout folder as ~/dba-discovery.
 
 ## Tests
 
@@ -9,7 +9,7 @@ $ python -m pytest -v
 ============================= test session starts ==============================
 platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- python
 cachedir: .pytest_cache
-rootdir: /home/claude/dba-discovery
+rootdir: ~/dba-discovery
 configfile: pyproject.toml
 testpaths: tests
 collecting ... collected 20 items
