@@ -1,7 +1,7 @@
 """Render the discovery wiki page (Markdown) from evidence, findings and unknowns.
 
 The page is written for two readers at once: a manager who reads the summary
-and the prioritized table, and an engineer who wants the exact query behind
+and the prioritized table, and a DBA who wants the exact query behind
 each statement, which is why every finding carries evidence keys that point
 into the appendix.
 """
