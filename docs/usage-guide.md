@@ -1,6 +1,6 @@
 # Usage guide: discovery with Claude and the skill set
 
-This guide is for the two people who will use the package: the engineer who runs discoveries and the manager who reads the pages and the inventory.
+This guide is for the two people who will use the package: the DBA who runs discoveries and the manager who reads the pages and the inventory.
 
 ## Installing the skills
 
