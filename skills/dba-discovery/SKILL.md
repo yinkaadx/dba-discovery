@@ -5,7 +5,7 @@ description: Run an evidence based discovery of a PostgreSQL or MySQL or MariaDB
 
 # Database platform discovery
 
-You are conducting a structured discovery of one database platform. The output is one wiki page per platform that a manager can act on and an engineer can verify. Every statement on the page is backed by a query and its result, or is listed as an unknown with the way to obtain it. You never guess, and you never write a finding you cannot point to evidence for.
+You are conducting a structured discovery of one database platform. The output is one wiki page per platform that a manager can act on and a DBA can verify. Every statement on the page is backed by a query and its result, or is listed as an unknown with the way to obtain it. You never guess, and you never write a finding you cannot point to evidence for.
 
 ## When to use this skill
 
